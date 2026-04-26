@@ -1,430 +1,84 @@
-/* EasyChair v2 - Neon Glassmorphism */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+/* Add this to your existing style.css */
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: 'Inter', -apple-system, sans-serif;
-    background: #0a0a0f;
-    color: #e2e8f0;
-    min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-}
-
-/* Animated Stars Background */
-.stars {
+/* Theme Toggle Button */
+.theme-toggle {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.stars::before,
-.stars::after {
-    content: '';
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: #fff;
-    border-radius: 50%;
-    animation: twinkle 3s infinite;
-}
-
-.stars::before {
-    top: 20%;
-    left: 30%;
-    animation-delay: 0s;
-}
-
-.stars::after {
-    top: 60%;
-    right: 20%;
-    animation-delay: 1.5s;
-}
-
-@keyframes twinkle {
-    0%, 100% { opacity: 0; transform: scale(0); }
-    50% { opacity: 1; transform: scale(1); }
-}
-
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
-    position: relative;
-    z-index: 10;
-    min-height: 100vh;
-}
-
-/* Glassmorphism Cards */
-.glass-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    padding: 2rem;
-    box-shadow: 
-        0 25px 45px rgba(0,0,0,0.3),
-        0 0 0 1px rgba(255,255,255,0.05);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glass-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 
-        0 35px 65px rgba(0,0,0,0.4),
-        0 0 0 1px rgba(255,255,255,0.1);
-}
-
-/* Neon Header */
-header {
-    text-align: center;
-    padding: 3rem 2rem;
-    background: linear-gradient(135deg, rgba(120,119,198,0.15) 0%, rgba(255,119,198,0.15) 100%);
-    border-radius: 24px;
-    margin-bottom: 2rem;
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-header h1 {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 800;
-    background: linear-gradient(135deg, #00f5ff 0%, #ff00ff 50%, #00ff88 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-}
-
-header p {
-    font-size: 1.3rem;
-    opacity: 0.9;
-    color: #a1a1aa;
-}
-
-/* Main Layout */
-.main-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-@media (max-width: 1024px) {
-    .main-content {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-}
-
-/* Panel Styling */
-.panel {
-    background: rgba(20, 20, 30, 0.8);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    padding: 2rem;
-    transition: all 0.3s ease;
-}
-
-.panel:hover {
-    border-color: rgba(0, 255, 255, 0.3);
-    box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
-}
-
-.panel h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: #fff;
-    background: linear-gradient(135deg, #00f5ff, #ff00ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* Judge Inputs */
-.judge-inputs {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-}
-
-.judge-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.judge-row label {
-    font-weight: 600;
-    color: #00f5ff;
-    min-width: 80px;
-    font-size: 0.95rem;
-}
-
-.call-select {
-    flex: 1;
-    padding: 1rem 1.25rem;
-    background: rgba(255, 255, 255, 0.08);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 500;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-}
-
-.call-select:focus {
-    outline: none;
-    border-color: #00f5ff;
-    box-shadow: 0 0 0 4px rgba(0, 245, 255, 0.2);
-    background: rgba(0, 245, 255, 0.1);
-}
-
-/* Exchange Grid */
-.exchange-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.25rem;
-    max-height: 450px;
-    overflow-y: auto;
-    padding-right: 0.5rem;
-}
-
-.exchange-grid::-webkit-scrollbar {
-    width: 6px;
-}
-
-.exchange-grid::-webkit-scrollbar-track {
-    background: rgba(255,255,255,0.05);
-    border-radius: 10px;
-}
-
-.exchange-grid::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #00f5ff, #ff00ff);
-    border-radius: 10px;
-}
-
-/* Exchange Cards */
-.exchange-item {
-    background: linear-gradient(145deg, rgba(40,40,60,0.8), rgba(20,20,40,0.8));
-    border: 2px solid rgba(255,255,255,0.1);
-    border-radius: 16px;
-    padding: 1.5rem;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.exchange-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #00f5ff, #ff00ff, transparent);
-}
-
-.exchange-item:hover {
-    transform: translateY(-6px) scale(1.02);
-    border-color: #00f5ff;
-    box-shadow: 
-        0 20px 40px rgba(0, 245, 255, 0.2),
-        0 0 40px rgba(0, 245, 255, 0.1);
-}
-
-.exchange-item.resolved {
-    border-color: #00ff88;
-    background: linear-gradient(145deg, rgba(0, 60, 30, 0.9), rgba(0, 40, 20, 0.9));
-    box-shadow: 0 15px 35px rgba(0, 255, 136, 0.3);
-}
-
-.exchange-item.dissenting {
-    border-color: #ff3366;
-    animation: pulse-red 2s infinite;
-    box-shadow: 0 0 30px rgba(255, 51, 102, 0.4);
-}
-
-@keyframes pulse-red {
-    0%, 100% { box-shadow: 0 0 20px rgba(255,51,102,0.4); }
-    50% { box-shadow: 0 0 40px rgba(255,51,102,0.6); }
-}
-
-.exchange-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.exchange-num {
-    font-weight: 700;
-    font-size: 1.3rem;
-    background: linear-gradient(135deg, #00f5ff, #ff00ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.interchangeable {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 193, 7, 0.2));
-    color: #ffd700;
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    backdrop-filter: blur(10px);
-}
-
-/* Recommendations */
-.recommendations-panel {
-    grid-column: 1 / -1;
-}
-
-.recommendation-item {
-    background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(255, 0, 255, 0.15));
-    border: 1px solid rgba(0, 245, 255, 0.3);
-    padding: 1.5rem;
-    border-radius: 16px;
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    backdrop-filter: blur(15px);
-}
-
-.priority-badge {
-    background: linear-gradient(135deg, #00f5ff, #ff00ff);
-    padding: 0.5rem 1.25rem;
-    border-radius: 25px;
-    font-weight: 700;
-    font-size: 0.95rem;
-    box-shadow: 0 4px 15px rgba(0, 245, 255, 0.4);
-}
-
-/* Final Call */
-.final-call-panel {
-    grid-column: 1 / -1;
-}
-
-#finalCall.consensus {
-    background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
-    color: #0a0a0f;
-    padding: 3rem;
-    border-radius: 24px;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 800;
-    border: 2px solid rgba(0, 255, 136, 0.5);
-    box-shadow: 0 30px 60px rgba(0, 255, 136, 0.4);
-    backdrop-filter: blur(20px);
-}
-
-/* Neon Buttons */
-.controls {
-    display: flex;
-    gap: 1.5rem;
-    padding: 2.5rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.btn-neon {
-    padding: 1rem 2.5rem;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 60px;
+    height: 60px;
     border: none;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: 700;
+    border-radius: 50%;
+    font-size: 1.5rem;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    backdrop-filter: blur(20px);
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }
 
-.btn-primary {
-    background: linear-gradient(45deg, #00f5ff, #ff00ff);
-    color: #0a0a0f;
-    box-shadow: 
-        0 8px 25px rgba(0, 245, 255, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.2);
+.light-mode .theme-toggle {
+    background: rgba(255,255,255,0.9);
+    color: #333;
 }
 
-.btn-primary:hover {
-    transform: translateY(-4px) scale(1.05);
-    box-shadow: 
-        0 20px 40px rgba(0, 245, 255, 0.6),
-        0 0 60px rgba(0, 245, 255, 0.4);
-}
-
-.btn-secondary {
-    background: linear-gradient(45deg, #64748b, #475569);
+.dark-mode .theme-toggle {
+    background: rgba(0,0,0,0.7);
     color: #fff;
-    box-shadow: 0 8px 25px rgba(100, 116, 139, 0.4);
 }
 
-.btn-export {
-    background: linear-gradient(45deg, #00ff88, #00cc6a);
-    color: #0a0a0f;
-    box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+.theme-toggle:hover {
+    transform: scale(1.1) rotate(180deg);
 }
 
-.btn-add-judge {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    padding: 0.75rem 1.5rem;
+/* Light Mode Overrides */
+.light-mode {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: #2d3748;
 }
 
-/* Responsive */
+.light-mode .glass-card,
+.light-mode .panel {
+    background: rgba(255,255,255,0.9);
+    border-color: rgba(0,0,0,0.1);
+    color: #2d3748;
+}
+
+.light-mode .call-select {
+    background: rgba(255,255,255,0.95);
+    color: #2d3748;
+    border-color: rgba(0,0,0,0.1);
+}
+
+.light-mode header h1 {
+    color: #2d3748;
+    text-shadow: none;
+}
+
+.light-mode .exchange-item {
+    background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(248,250,252,0.8));
+    border-color: rgba(0,0,0,0.1);
+    color: #2d3748;
+}
+
+.light-mode .recommendation-item {
+    background: linear-gradient(135deg, rgba(79,172,254,0.15), rgba(255,0,255,0.1));
+    border-color: rgba(0,245,255,0.3);
+}
+
+/* Consensus in Light Mode */
+.light-mode #finalCall.consensus {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+/* Responsive fixes */
 @media (max-width: 768px) {
-    .container {
-        padding: 1rem;
+    .theme-toggle {
+        top: 15px;
+        right: 15px;
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
     }
-    
-    .controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .btn-neon {
-        width: 100%;
-    }
-    
-    .exchange-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    }
-}
-
-/* Loading Animation */
-@keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-}
-
-.loading {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
 }

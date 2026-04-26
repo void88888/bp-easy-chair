@@ -10,6 +10,21 @@ document.addEventListener('DOMContentLoaded', function() {
     updateExchangeGrid();
 });
 
+// Theme Toggle
+function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    document.body.classList.toggle('dark-mode');
+    const toggle = document.querySelector('.theme-toggle');
+    toggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+    localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+}
+
+// Load saved theme
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+    document.querySelector('.theme-toggle').textContent = '☀️';
+}
+
 // Initialize exchange grid
 function initExchanges() {
     const grid = document.getElementById('exchangeGrid');
@@ -25,17 +40,18 @@ function initExchanges() {
                 <div class="interchangeable-toggle">
                     <label>
                         <input type="checkbox" class="interchangeable-checkbox">
-                        Interchangeable
+                        <span>🟡 Interchangeable</span>
                     </label>
                 </div>
             </div>
             <div class="exchange-status">
-                <small>Click to toggle resolved</small>
+                <small>Click card to toggle resolved</small>
             </div>
         `;
         
         exchangeDiv.addEventListener('click', (e) => {
-            if (e.target.classList.contains('interchangeable-checkbox')) return;
+            if (e.target.closest('.interchangeable-checkbox') || 
+                e.target.closest('.interchangeable-toggle')) return;
             toggleExchangeResolved(i);
         });
         
@@ -48,7 +64,10 @@ function initExchanges() {
 }
 
 function addJudge() {
-    if (judges >= 7) return; // Max 7 judges
+    if (judges >= 7) {
+        alert('Maximum 7 judges!');
+        return;
+    }
     
     judges++;
     const judgeDiv = document.createElement('div');
@@ -81,6 +100,7 @@ function toggleExchangeResolved(exchangeNum) {
 function setInterchangeable(exchangeNum, isInterchangeable) {
     exchanges[exchangeNum - 1].interchangeable = isInterchangeable;
     updateExchangeGrid();
+    calculateRecommendations();
 }
 
 function updateExchangeGrid() {
@@ -88,33 +108,23 @@ function updateExchangeGrid() {
         const exchange = exchanges[index];
         const num = index + 1;
         
-        // Update interchangeable indicator
+        // Update resolved status
+        item.classList.toggle('resolved', exchange.resolved);
+        item.classList.toggle('dissenting', !exchange.resolved);
+        
+        // Update interchangeable
         const checkbox = item.querySelector('.interchangeable-checkbox');
         checkbox.checked = exchange.interchangeable;
         
-        const interchangeableEl = item.querySelector('.interchangeable');
-        if (exchange.interchangeable && !interchangeableEl) {
-            const header = item.querySelector('.exchange-header');
-            const badge = document.createElement('span');
-            badge.className = 'interchangeable';
-            badge.textContent = '🟡 Interchangeable';
-            header.appendChild(badge);
-        } else if (!exchange.interchangeable && interchangeableEl) {
-            interchangeableEl.remove();
-        }
-        
-        // Update resolved/dissenting status
-        item.classList.toggle('resolved', exchange.resolved);
-        item.classList.toggle('dissenting', !exchange.resolved);
+        const label = item.querySelector('.interchangeable-toggle span');
+        label.style.opacity = exchange.interchangeable ? '1' : '0.6';
     });
 }
 
 function getJudgesCalls() {
     const calls = [];
     document.querySelectorAll('.call-select').forEach(select => {
-        if (select.value) {
-            calls.push(select.value);
-        }
+        if (select.value) calls.push(select.value);
     });
     return calls;
 }
@@ -122,22 +132,15 @@ function getJudgesCalls() {
 function calculateDifficulty(exchangeNum) {
     const exchange = exchanges[exchangeNum - 1];
     
-    // Priority 1: Judges indicating interchangeability (highest priority)
+    // Priority 1: Interchangeable = easiest (0)
     if (exchange.interchangeable) return 0;
     
-    // Priority 2: Number of judges disagreeing (mock calculation)
-    const disagreementScore = Math.random() * 3; // 0-3
+    // Mock realistic scoring
+    const baseDifficulty = (exchangeNum - 1) * 0.5; // Later exchanges harder
+    const disagreement = Math.random() * 3; // 0-3 judges disagreeing
+    const benchDistance = Math.random() * 1.5;
     
-    // Priority 3: Distance of benches (mock)
-    const benchDistance = Math.random() * 2;
-    
-    // Priority 4: Top/bottom agreement (mock)
-    const agreementScore = Math.random();
-    
-    // Priority 5: Exchange order (later = harder)
-    const orderScore = (exchangeNum - 1) / 10;
-    
-    return disagreementScore + benchDistance + agreementScore + orderScore;
+    return baseDifficulty + disagreement + benchDistance;
 }
 
 function calculateRecommendations() {
@@ -146,42 +149,95 @@ function calculateRecommendations() {
     
     const calls = getJudgesCalls();
     if (calls.length === 0) {
-        recommendationsEl.innerHTML = '<p>Enter judges\' calls to see recommendations!</p>';
-        finalCallEl.innerHTML = '<p>Resolve all dissenting exchanges to see consensus call</p>';
+        recommendationsEl.innerHTML = '<p style="text-align:center;opacity:0.7">👆 Enter judges\' calls first!</p>';
+        finalCallEl.innerHTML = '<p style="text-align:center;opacity:0.7">Resolve exchanges to see consensus!</p>';
         return;
     }
     
-    // Calculate difficulties and sort exchanges
-    const exchangeDifficulties = exchanges.map((exchange, index) => ({
-        num: index + 1,
-        difficulty: calculateDifficulty(index + 1),
-        resolved: exchange.resolved,
-        interchangeable: exchange.interchangeable
-
-// SAME SCRIPT AS BEFORE + PWA
-// ... (copy entire previous script.js) ...
-
-// Add PWA Support
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js');
-    });
+    // Calculate difficulties
+    const unresolvedExchanges = exchanges
+        .map((exchange, index) => ({
+            num: index + 1,
+            difficulty: calculateDifficulty(index + 1),
+            resolved: exchange.resolved,
+            interchangeable: exchange.interchangeable
+        }))
+        .filter(e => !e.resolved)
+        .sort((a, b) => a.difficulty - b.difficulty); // Easy → Hard
+    
+    // Show recommendations
+    if (unresolvedExchanges.length === 0) {
+        recommendationsEl.innerHTML = '<p style="text-align:center;font-size:1.2rem">✅ All exchanges resolved!</p>';
+        showConsensusCall(calls);
+    } else {
+        recommendationsEl.innerHTML = unresolvedExchanges.map((exchange, idx) => `
+            <div class="recommendation-item">
+                <span>Exchange ${exchange.num}</span>
+                <div>
+                    ${exchange.interchangeable ? '🟡 Interchangeable ' : ''}
+                    <span class="priority-badge">#${idx + 1}</span>
+                </div>
+            </div>
+        `).join('');
+        
+        finalCallEl.innerHTML = '<p style="text-align:center;opacity:0.7">Resolve highlighted exchanges first! ⬆️</p>';
+    }
 }
 
-// Update calculateRecommendations to use new classes
-function calculateRecommendations() {
-    // ... same logic ...
+function showConsensusCall(calls) {
+    const finalCallEl = document.getElementById('finalCall');
     
-    // Update button classes
-    document.querySelectorAll('.btn-primary').forEach(btn => {
-        btn.className = 'btn-neon btn-primary';
-    });
+    // Simple majority consensus (mock)
+    const mostCommonCall = calls.sort((a,b) =>
+        calls.filter(v => v===b).length - calls.filter(v => v===a).length
+    )[0];
     
-    document.querySelectorAll('.btn-secondary').forEach(btn => {
-        btn.className = 'btn-neon btn-secondary';
-    });
+    finalCallEl.innerHTML = `
+        <div class="consensus-call">
+            <div style="font-size:3rem;margin-bottom:1rem">🎉 CONSENSUS!</div>
+            <div style="font-size:1.8rem;font-weight:700">${mostCommonCall}</div>
+            <div style="opacity:0.8;margin-top:1rem">(${calls.length} judges agree)</div>
+        </div>
+    `;
+    finalCallEl.classList.add('consensus');
+}
+
+function resetAll() {
+    judges = 3;
+    exchanges = Array(7).fill().map(() => ({interchangeable: false, resolved: false}));
     
-    document.querySelectorAll('.btn-export').forEach(btn => {
-        btn.className = 'btn-neon btn-export';
-    });
+    // Reset judges
+    document.querySelector('.judge-inputs').innerHTML = `
+        <div class="judge-row" id="judge1">
+            <label>Judge 1:</label>
+            <select class="call-select"><option value="">Select call...</option>...</select>
+        </div>
+        <div class="judge-row" id="judge2">
+            <label>Judge 2:</label>
+            <select class="call-select"><option value="">Select call...</option>...</select>
+        </div>
+        <div class="judge-row" id="judge3">
+            <label>Judge 3:</label>
+            <select class="call-select"><option value="">Select call...</option>...</select>
+        </div>
+    `;
+    
+    initExchanges();
+    document.getElementById('recommendations').innerHTML = '<p>Enter judges\' calls and mark exchanges!</p>';
+    document.getElementById('finalCall').classList.remove('consensus');
+    document.getElementById('finalCall').innerHTML = '<p>Resolve all dissenting exchanges to see consensus call</p>';
+}
+
+function exportData() {
+    const data = {
+        judges: getJudgesCalls(),
+        exchanges: exchanges,
+        timestamp: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `easychair-deliberation-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
 }
